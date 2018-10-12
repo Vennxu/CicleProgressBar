@@ -1,5 +1,6 @@
 package com.venn.round.library;
 
+import android.animation.ArgbEvaluator;
 import android.content.Context;
 import android.content.res.TypedArray;
 import android.graphics.Canvas;
@@ -42,9 +43,14 @@ public class RoundProgressBar extends View {
     private int colorStart = Color.parseColor("#3B3258");
     private int colorEnd = Color.parseColor("#3385ff");
 
+    private int colorFull = colorStart;
+
     private int colorThumbOut = Color.parseColor("#A63385ff");
+    private int colorThumb = Color.parseColor("#3385ff");
 
     private int colorBg = Color.parseColor("#eeeeee");
+
+    private ArgbEvaluator evaluator;
 
 
     public RoundProgressBar(Context context) {
@@ -53,7 +59,7 @@ public class RoundProgressBar extends View {
     }
 
     public RoundProgressBar(Context context, @Nullable AttributeSet attrs) {
-        this(context, attrs,0);
+        this(context, attrs, 0);
     }
 
     public RoundProgressBar(Context context, @Nullable AttributeSet attrs, int defStyleAttr) {
@@ -61,7 +67,7 @@ public class RoundProgressBar extends View {
         initStyle(context, attrs, defStyleAttr);
     }
 
-    private void initStyle(Context context, @Nullable AttributeSet attrs, int defStyleAttr){
+    private void initStyle(Context context, @Nullable AttributeSet attrs, int defStyleAttr) {
         if (attrs == null) {
             return;
         }
@@ -69,6 +75,7 @@ public class RoundProgressBar extends View {
         colorStart = array.getColor(R.styleable.RoundProgressBar_round_start_color, colorStart);
         colorEnd = array.getColor(R.styleable.RoundProgressBar_round_end_color, colorEnd);
         colorBg = array.getColor(R.styleable.RoundProgressBar_round_bg_color, colorBg);
+        colorThumb = array.getColor(R.styleable.RoundProgressBar_round_thumb_color, colorThumb);
         colorThumbOut = array.getColor(R.styleable.RoundProgressBar_round_thumb_out_color, colorThumbOut);
         thumbRadius = array.getDimension(R.styleable.RoundProgressBar_round_thumb_radius, thumbRadius);
         thumbOutRadius = array.getDimension(R.styleable.RoundProgressBar_round_thumb_out_radius, thumbOutRadius);
@@ -81,7 +88,8 @@ public class RoundProgressBar extends View {
         array.recycle();
     }
 
-    private void initPaint(){
+    private void initPaint() {
+        evaluator = new ArgbEvaluator();
         mBackgroundPaint.setColor(colorBg);
         mBackgroundPaint.setStyle(Paint.Style.STROKE);
         mBackgroundPaint.setStrokeWidth(bgProgressWidth);
@@ -99,25 +107,14 @@ public class RoundProgressBar extends View {
         mThumbOutPaint.setColor(colorThumbOut);
         mThumbOutPaint.setAntiAlias(true);
 
-        mFullPaint.setShader(getGradient());
+        rectF = getRectF();
+
     }
 
-    private LinearGradient getGradient(){
+    private RectF getRectF() {
         float x = thumbOutRadius < thumbRadius ? thumbRadius : thumbOutRadius;
         float y = x;
-        rectF = new RectF(x, y, x + (radius * 2), y + (radius * 2) );
-//        float radian0 = getRadiansAngle(0, startAngle);
-//        float radian1 = getRadiansAngle(180, startAngle);
-        float radian = (float) Math.toRadians(180 > 360 ? 180 - 360 : 180);
-
-        float x0 = getAngleX(rectF.centerX(), 0, radius);
-        float y0 = getAngleY(rectF.centerY(), 0, radius);
-
-        float x1 = getAngleX(rectF.centerX(), radian, radius);
-        float y1 = getAngleY(rectF.centerY(), radian, radius);
-
-        return new LinearGradient(x0, y0, x1, y1, new int[]{colorStart, colorEnd},
-                null, LinearGradient.TileMode.CLAMP);
+        return new RectF(x, y, x + (radius * 2), y + (radius * 2));
     }
 
     @Override
@@ -129,18 +126,28 @@ public class RoundProgressBar extends View {
 
     private void drawFull(Canvas canvas) {
         float angle = getCurrentRotation();
-
         canvas.drawArc(rectF, startAngle, 360, false, mBackgroundPaint);
-        canvas.drawArc(rectF, startAngle, angle, false, mFullPaint);
+        drawFullGradient(canvas, angle);
 
         float radian = getRadiansAngle(angle, startAngle);
 
         float x1 = getAngleX(rectF.centerX(), radian, (int) radius);
         float y1 = getAngleY(rectF.centerY(), radian, (int) radius);
 
+        mRoundPaint.setColor(colorFull);
         canvas.drawCircle(x1, y1, thumbRadius, mRoundPaint);
         canvas.drawCircle(x1, y1, thumbOutRadius, mThumbOutPaint);
 
+    }
+
+    private void drawFullGradient(Canvas canvas, float angle){
+        for (int i = 0; i < angle; i++) {
+            colorFull = (Integer) evaluator.evaluate(i / 360f, colorStart, colorEnd);
+            mFullPaint.setColor(colorFull);
+            if (i < maxProgress * 360) {
+                canvas.drawArc(rectF, (float) (-90 + i), 1.35f, false, mFullPaint);
+            }
+        }
     }
 
     @Override

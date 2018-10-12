@@ -7,6 +7,7 @@
         <attr name="round_start_color" format="color"/>
         <attr name="round_end_color" format="color"/>
         <attr name="round_bg_color" format="color"/>
+        <attr name="round_thumb_color" format="color"/>
         <attr name="round_thumb_out_color" format="color"/>
         <attr name="round_radius" format="dimension"/>
         <attr name="round_thumb_radius" format="dimension"/>
