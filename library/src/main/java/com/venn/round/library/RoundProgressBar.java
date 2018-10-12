@@ -108,6 +108,7 @@ public class RoundProgressBar extends View {
         mThumbOutPaint.setAntiAlias(true);
 
         rectF = getRectF();
+        mFullPaint.setShader(getGradient());
 
     }
 
@@ -127,7 +128,7 @@ public class RoundProgressBar extends View {
     private void drawFull(Canvas canvas) {
         float angle = getCurrentRotation();
         canvas.drawArc(rectF, startAngle, 360, false, mBackgroundPaint);
-        drawFullGradient(canvas, angle);
+        canvas.drawArc(rectF, startAngle, angle, false, mFullPaint);
 
         float radian = getRadiansAngle(angle, startAngle);
 
@@ -140,15 +141,33 @@ public class RoundProgressBar extends View {
 
     }
 
-    private void drawFullGradient(Canvas canvas, float angle){
-        for (int i = 0; i < angle; i++) {
-            colorFull = (Integer) evaluator.evaluate(i / 360f, colorStart, colorEnd);
-            mFullPaint.setColor(colorFull);
-            if (i < maxProgress * 360) {
-                canvas.drawArc(rectF, (float) (-90 + i), 1.35f, false, mFullPaint);
-            }
-        }
+    private LinearGradient getGradient(){
+        float x = thumbOutRadius < thumbRadius ? thumbRadius : thumbOutRadius;
+        float y = x;
+        rectF = new RectF(x, y, x + (radius * 2), y + (radius * 2) );
+//        float radian0 = getRadiansAngle(0, startAngle);
+//        float radian1 = getRadiansAngle(180, startAngle);
+        float radian = (float) Math.toRadians(90);
+
+        float x0 = getAngleX(rectF.centerX(), -90, radius);
+        float y0 = getAngleY(rectF.centerY(), -90, radius);
+
+        float x1 = getAngleX(rectF.centerX(), radian, radius);
+        float y1 = getAngleY(rectF.centerY(), radian, radius);
+
+        return new LinearGradient(x0, y0, x1, y1, new int[]{colorStart, colorEnd},
+                null, LinearGradient.TileMode.CLAMP);
     }
+
+//    private void drawFullGradient(Canvas canvas, float angle){
+//        for (int i = 0; i < angle; i++) {
+//            colorFull = (Integer) evaluator.evaluate(i / 360f, colorStart, colorEnd);
+//            mFullPaint.setColor(colorFull);
+//            if (i < maxProgress * 360) {
+//                canvas.drawArc(rectF, (float) (-180 + i), 1.35f, false, mFullPaint);
+//            }
+//        }
+//    }
 
     @Override
     protected void onMeasure(int widthMeasureSpec, int heightMeasureSpec) {
