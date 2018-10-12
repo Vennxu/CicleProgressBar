@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+
+
+    <declare-styleable name="RoundProgressBar">
+
+        <attr name="round_start_color" format="color"/>
+        <attr name="round_end_color" format="color"/>
+        <attr name="round_bg_color" format="color"/>
+        <attr name="round_thumb_out_color" format="color"/>
+        <attr name="round_radius" format="dimension"/>
+        <attr name="round_thumb_radius" format="dimension"/>
+        <attr name="round_thumb_out_radius" format="dimension"/>
+        <attr name="round_progress" format="float"/>
+        <attr name="round_max_progress" format="integer"/>
+        <attr name="round_bg_progress_width" format="dimension"/>
+        <attr name="round_full_progress_width" format="dimension"/>
+        <attr name="round_start_angle" format="float"/>
+
+    </declare-styleable>
+
+</resources>
