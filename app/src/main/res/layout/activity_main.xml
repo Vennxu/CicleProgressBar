@@ -7,6 +7,7 @@
     tools:context=".MainActivity">
 
     <com.venn.round.library.RoundProgressBar
+        android:id="@+id/progress"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginStart="134dp"
@@ -22,7 +23,7 @@
         app:round_bg_progress_width="8dp"
         app:round_full_progress_width="8dp"
         app:round_max_progress="100"
-        app:round_progress="100"
+        app:round_progress="60"
         app:round_radius="60dp"
         app:round_thumb_out_radius="10dp"
         app:round_thumb_radius="8dp" />

@@ -109,6 +109,7 @@ public class RoundProgressBar extends View {
 
         rectF = getRectF();
         mFullPaint.setShader(getGradient());
+        mFullPaint.setStrokeCap(Paint.Cap.ROUND);
 
     }
 
@@ -205,5 +206,10 @@ public class RoundProgressBar extends View {
 
     private float getAngleY(float centerY, float radian, float radius) {
         return (float) (centerY + Math.sin(radian) * radius);
+    }
+
+    public void setCurrentProgress(float currentProgress) {
+        this.currentProgress = currentProgress;
+        invalidate();
     }
 }
